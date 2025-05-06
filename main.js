@@ -1,11 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
+require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3000;
 
 // MongoDB Connection URI
-const uri = "mongodb+srv://sivatejasivakavi:EYlMPJ3X8wHahCjm@cluster-slc.vxoqaed.mongodb.net/snap?retryWrites=true&w=majority&appName=Cluster-SLC";
+const uri = process.env.MONGODB_URI; // Use environment variable for security
 
 // Connect to MongoDB using Mongoose
 async function connectToDatabase() {
