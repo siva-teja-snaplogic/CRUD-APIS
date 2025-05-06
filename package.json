@@ -1,0 +1,25 @@
+{
+  "name": "crud-apis",
+  "version": "1.0.0",
+  "description": "APIs for crud operations",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siva-teja-snaplogic/CRUD-APIS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/siva-teja-snaplogic/CRUD-APIS/issues"
+  },
+  "homepage": "https://github.com/siva-teja-snaplogic/CRUD-APIS#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.14.1"
+  }
+}
