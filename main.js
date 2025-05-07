@@ -5,9 +5,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // MongoDB Connection URI
-const uri = process.env.MONGODB_URI; // Use environment variable for security
+const uri = process.env.MONGODB_URI;
 
-// Connect to MongoDB using Mongoose
+// Connecting to MongoDB using Mongoose
 async function connectToDatabase() {
   try {
     await mongoose.connect(uri, {
@@ -17,7 +17,7 @@ async function connectToDatabase() {
     console.log('Connected to MongoDB Atlas');
   } catch (err) {
     console.error('Error connecting to MongoDB:', err);
-    process.exit(1); // Exit the process if the connection fails
+    process.exit(1);
   }
 }
 
@@ -26,8 +26,6 @@ connectToDatabase();
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
-
-// Define a Mongoose Schema (replace with your actual data structure)
 const SnapSchema = new mongoose.Schema({
     snapPack: { type: String, required: true },
     description: { type: String, required: true },
@@ -43,26 +41,21 @@ const SnapSchema = new mongoose.Schema({
 });
 
 // Create a Mongoose Model
-const Item = mongoose.model('Item', SnapSchema);  // 'Item' will be the name of the collection in MongoDB (it will be pluralized to 'items')
+const Item = mongoose.model('Item', SnapSchema);
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
-// app.listen(port, () => {
-//     console.log(`Server is running on port ${port}`);
-//   });
-// --- API Endpoints ---
 
-// 1. Create (POST /items)
+// API Endpoints
+
 app.post('/items', async (req, res) => {
     try {
-        // Validate required fields
         const { snapPack, description, docLink, category, type, snapPricingCategory, sourceversion, snapversion, AhaBacklogLink, currentWorkItems } = req.body;
 
         if (!snapPack || !description || !docLink || !category || !type || !snapPricingCategory || !sourceversion || !snapversion || !AhaBacklogLink || currentWorkItems === undefined) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
-        // Create a new item
         const newItem = new Item({
             snapPack,
             description,
@@ -76,117 +69,84 @@ app.post('/items', async (req, res) => {
             currentWorkItems,
         });
 
-        // Save the item to the database
         const savedItem = await newItem.save();
-        res.status(201).json(savedItem); // Respond with the created item
+        res.status(201).json(savedItem);
     } catch (err) {
         console.error("Error creating item:", err);
         res.status(500).json({ error: 'Failed to create item', details: err.message });
     }
 });
 
-// 2. Read All (GET /items)
 app.get('/items', async (req, res) => {
     try {
-        // Fetch all items from the database
+        // Fetching all items from the database
         const items = await Item.find();
-        res.status(200).json(items); // Respond with the list of items
+        res.status(200).json(items);
     } catch (err) {
         console.error("Error retrieving items:", err);
         res.status(500).json({ error: 'Failed to retrieve items', details: err.message });
     }
 });
 
-// 3. Read One (GET /items/:id)
 app.get('/items/:id', async (req, res) => {
     try {
-        const itemId = req.params.id; // No need to convert, Mongoose handles it
+        const itemId = req.params.id;
 
-        const item = await Item.findById(itemId); // findById returns null if not found
+        const item = await Item.findById(itemId);
         if (!item) {
             return res.status(404).json({ error: 'Item not found' });
         }
         res.status(200).json(item);
     } catch (err) {
         console.error("Error reading item:", err);
-        if (err instanceof mongoose.Error.CastError) {
-            return res.status(400).json({ error: 'Invalid item ID format' });
-        }
         res.status(500).json({ error: 'Failed to retrieve item', details: err.message });
     }
 });
 
-// 4. Update (PUT /items/:id)  (Use PUT for complete replacement, PATCH for partial updates)
 app.put('/items/:id', async (req, res) => {
     try {
         const itemId = req.params.id;
-
-        // Validate the request body (optional, based on your schema)
         const { snapPack, description, docLink, category, type, snapPricingCategory, sourceversion, snapversion, AhaBacklogLink, currentWorkItems } = req.body;
 
         if (!snapPack || !description || !docLink || !category || !type || !snapPricingCategory || !sourceversion || !snapversion || !AhaBacklogLink || currentWorkItems === undefined) {
             return res.status(400).json({ error: 'All fields are required for update' });
         }
 
-        // Update the item in the database
         const updatedItem = await Item.findByIdAndUpdate(
             itemId,
-            req.body, // Update with the request body
+            req.body,
             {
-                new: true, // Return the updated document
-                runValidators: true, // Ensure schema validation is applied
+                new: true,
+                runValidators: true,
             }
         );
 
         if (!updatedItem) {
             return res.status(404).json({ error: 'Item not found' });
         }
-
-        res.status(200).json(updatedItem); // Respond with the updated item
+        res.status(200).json(updatedItem);
     } catch (err) {
         console.error("Error updating item:", err);
-        if (err instanceof mongoose.Error.CastError) {
-            return res.status(400).json({ error: 'Invalid item ID format' });
-        }
         res.status(500).json({ error: 'Failed to update item', details: err.message });
     }
 });
 
-// 5. Delete (DELETE /items/:id)
 app.delete('/items/:id', async (req, res) => {
     try {
         const itemId = req.params.id;
 
-        const deletedItem = await Item.findByIdAndDelete(itemId); // findByIdAndDelete
+        const deletedItem = await Item.findByIdAndDelete(itemId);
         if (!deletedItem) {
             return res.status(404).json({ error: 'Item not found' });
         }
-        res.status(204).send(); // 204 No Content (successful deletion, no body)
+        res.status(204).send();
     } catch (err) {
         console.error("Error deleting item:", err);
-        if (err instanceof mongoose.Error.CastError) {
-            return res.status(400).json({ error: 'Invalid item ID format' });
-        }
         res.status(500).json({ error: 'Failed to delete item', details: err.message });
     }
 });
 
-// --- Error Handling Middleware ---
-//  This should be placed after all route definitions
-// app.use((err, req, res, next) => {
-//     if (isCelebrateError(err)) {
-//         // We use celebrate's error() method to get the error details.
-//         const errorMessage = err.details.get('body') || err.details.get('query') || err.details.get('params');
-//         return res.status(400).json({
-//             error: 'Invalid input',
-//             details: errorMessage.message, //  Send the error message
-//         });
-//     }
-//     // For other errors, delegate to the default Express error handler
-//     next(err);
-// });
-
-// Start the server
+// Starting the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
