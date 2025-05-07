@@ -25,4 +25,4 @@ CRUD operations includes
 
 The live server for APIs has been deployed using render.com 
 
-To access the endpoints use the url : https://crud-apis-cpov.onrender.com/
+To access the endpoints use the url : https://crud-apis-cpov.onrender.com/items/
