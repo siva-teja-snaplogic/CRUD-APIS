@@ -48,8 +48,7 @@ Method---Endpoint
 1. Install Nodejs
 2. Ensure that to have a mongoDB cluster
 3. Clone the Repository:
-   git clone https://github.com/your-repo-name.git
-   cd CRUD_APIS
+   git clone https://github.com/siva-teja-snaplogic/CRUD-APIS.git
 4. Install dependencies using command npm install
 5. Update the .env file with your MongoDB connection string.
 6. Start the Server using command node main.js
