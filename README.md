@@ -35,13 +35,12 @@ The live server for APIs has been deployed using render.com.
 To access the endpoints use the Base url : https://crud-apis-cpov.onrender.com/
 
 ## API Endpoints
-
 Method---Endpoint
-POST---/items
-GET---/items
-GET---/items/:id
-PUT---/items/:id
-DELETE---/items/:id
+1. POST---/items
+2. GET---/items
+3. GET---/items/:id
+4. PUT---/items/:id
+5. DELETE---/items/:id
 
 ## How to Run Locally
 ## Steps
